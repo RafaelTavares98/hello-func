@@ -43,6 +43,7 @@ Resposta esperada:
 "Hello, Rafael. This HTTP triggered function executed successfully."
 
 ## 5. Estrutura de diretórios
+```bash
 .
 ├── function_app.py
 ├── host.json
