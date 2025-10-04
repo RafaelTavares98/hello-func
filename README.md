@@ -1,36 +1,46 @@
-# Azure Functions Hello World (Python)
+# Teste local Azure Functions Hello World (Python)
 
 ## Objetivo
-Reproduzir o exercício da aula: criar, rodar localmente e testar uma Azure Function HTTP.
+Usar o template do Azure Core Tools para subir uma Function HTTP de forma rápida.
 
 ## Pré-requisitos
-- Azure Functions Core Tools v4 (verificar com func --version)
+- Azure Functions Core Tools v4 
 - Python instalado
 - curl disponível para teste
 
 ## 1. Iniciar o projeto
-func init . --python
+```bash
+func init . --python # cria a estrutura base de Function configurado para Python.
+```
 
 Arquivos gerados: function_app.py, host.json, local.settings.json, requirements.txt, .gitignore, .vscode/
 
 ## 2. Criar a função HTTP
-func new --name HelloWorldFunc --template "HTTP trigger"
+```bash
+func new --name HelloWorldFunc --template "HTTP trigger" # inicia o assistente de criação de função em HTTP
+```
 Selecione a opção 2 (ANONYMOUS) para Auth Level.
 
 ## 3. Executar localmente
-Modo padrão:
+Execute
+```bash
 func start
-
-Modo em segundo plano:
-nohup func start > func.log 2>&1 &
-tail -f func.log
-Parar o processo:
-pkill -f "func start"
+```
 
 ## 4. Testar
-curl "http://localhost:7071/api/HelloWorldFunc?name=Rafael"
+
+- Abra outro terminal e execute:
+  ```bash
+  curl "http://localhost:7071/api/HelloWorldFunc?name=Rafael"
+  ```
+- Ou acesse no navegador:
+  ```bash
+  http://localhost:7071/api/HelloWorldFunc?name=Rafael
+  ```
+
 Resposta esperada:
-Hello, Rafael. This HTTP triggered function executed successfully.
+
+"Hello, Rafael. This HTTP triggered function executed successfully."
 
 ## 5. Estrutura de diretórios
 .
@@ -41,30 +51,3 @@ Hello, Rafael. This HTTP triggered function executed successfully.
 ├── .gitignore
 └── .vscode/
 
-## 6. Dicas rápidas
-- Auth ANONYMOUS é útil para testes. Em produção use FUNCTION.
-- Se a porta 7071 estiver ocupada, pare o processo ou mude WEBSITE_PORT.
-- Logs: tail -f func.log
-- local.settings.json é local e já está no .gitignore.
-
-## 7. Publicar no Azure (opcional)
-az login
-az account set --subscription "<SUBSCRIPTION_ID>"
-RESOURCE_GROUP="rg-hello-func"
-LOCATION="brazilsouth"
-STORAGE="st$RANDOM$RANDOM"
-APP="hello-func-app-$RANDOM"
-az group create -n $RESOURCE_GROUP -l $LOCATION
-az storage account create -g $RESOURCE_GROUP -n $STORAGE -l $LOCATION --sku Standard_LRS
-az functionapp create -g $RESOURCE_GROUP --consumption-plan-location $LOCATION --runtime python --functions-version 4 --name $APP --storage-account $STORAGE
-func azure functionapp publish $APP
-curl "https://$APP.azurewebsites.net/api/HelloWorldFunc?name=Rafael"
-
-## 8. Erros comuns
-- func: command not found → reinstalar Core Tools v4
-- 403/401 → função não está com AuthLevel=ANONYMOUS
-- Timeout → verificar se host está rodando e URL correta
-
-## 9. Limpeza
-pkill -f "func start"
-az group delete -n $RESOURCE_GROUP --yes --no-wait
